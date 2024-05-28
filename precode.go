@@ -47,7 +47,7 @@ var tasks = map[string]Task{
 func getTasks(w http.ResponseWriter, r *http.Request) {
 	resp, err := json.Marshal(tasks)
 	if err != nil {
-		log.Fatalf("error marshal tasks %v", err)
+		log.Printf("error marshal tasks %v", err)
 		http.Error(w, "error marshal tasks", http.StatusInternalServerError)
 		return
 	}
@@ -57,7 +57,7 @@ func getTasks(w http.ResponseWriter, r *http.Request) {
 	_, err = w.Write(resp)
 
 	if err != nil {
-		log.Fatalf("error writing response: %v", err)
+		log.Printf("error writing response: %v", err)
 		http.Error(w, "error writing response", http.StatusInternalServerError)
 		return
 	}
@@ -71,19 +71,19 @@ func postTask(w http.ResponseWriter, r *http.Request) {
 
 	_, err := buf.ReadFrom(r.Body)
 	if err != nil {
-		log.Fatalf("error reading body: %v", err)
+		log.Printf("error reading body: %v", err)
 		http.Error(w, "error reading body", http.StatusInternalServerError)
 		return
 	}
 
 	if err := json.Unmarshal(buf.Bytes(), &task); err != nil {
-		log.Fatalf("error unmarshalling body: %v", err)
+		log.Printf("error unmarshalling body: %v", err)
 		http.Error(w, "error reading body", http.StatusInternalServerError)
 		return
 	}
 	for _, t := range tasks {
 		if t.ID == task.ID {
-			log.Fatalf("task %v already exists", t.ID)
+			log.Printf("task %v already exists", t.ID)
 			http.Error(w, "task already exists", http.StatusBadRequest)
 			return
 		}
@@ -99,13 +99,13 @@ func getTask(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	task, ok := tasks[id]
 	if !ok {
-		log.Fatalf("task %s not found", id)
+		log.Printf("task %s not found", id)
 		http.Error(w, "Bad Request", http.StatusBadRequest)
 		return
 	}
 	resp, err := json.Marshal(task)
 	if err != nil {
-		log.Fatalf("error marshal task %v", err)
+		log.Printf("error marshal task %v", err)
 		http.Error(w, "error marshal task", http.StatusInternalServerError)
 		return
 	}
@@ -113,7 +113,7 @@ func getTask(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	_, err = w.Write(resp)
 	if err != nil {
-		log.Fatalf("error writing response: %v", err)
+		log.Printf("error writing response: %v", err)
 		http.Error(w, "error writing response", http.StatusInternalServerError)
 		return
 	}
@@ -136,7 +136,7 @@ func delTask(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	_, err = w.Write(resp)
 	if err != nil {
-		log.Fatalf("error writing response: %v", err)
+		log.Printf("error writing response: %v", err)
 		http.Error(w, "error writing response", http.StatusInternalServerError)
 		return
 	}
